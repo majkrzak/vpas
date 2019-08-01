@@ -5,6 +5,7 @@ import Data.HashMap.Strict (elems)
 import Control.Concurrent
 import Network.MQTT.Client (mqttConfig, _msgCB, _hostname, runClient, subscribe, waitForClient, QoS(QoS0))
 import Data.ByteString.Lazy (ByteString)
+import GHC.IO.Unsafe (unsafeInterleaveIO)
 
 data Message = Message {
   operator :: Integer,
@@ -29,7 +30,7 @@ messages = do
  messages' msg
  where
   messages' :: MVar ByteString -> IO [Message]
-  messages' msg = do
+  messages' msg = unsafeInterleaveIO $ do
     payload <- takeMVar msg
     case decode payload :: Maybe Message of
      Just message -> (message :) <$> messages' msg
