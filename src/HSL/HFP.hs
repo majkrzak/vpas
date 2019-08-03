@@ -15,8 +15,13 @@ data Message = Message {
 
 
 instance FromJSON Message where
-  parseJSON (Object o ) = parseJSON' (head (elems o))
-   where parseJSON' (Object o) = Message <$> o .: "oper" <*> o .: "veh" <*> o .: "stop"
+  parseJSON (Object o) = parseJSON' . head . elems $ o
+   where
+    parseJSON' (Object o) =
+     Message
+      <$> o .: "oper"
+      <*> o .: "veh"
+      <*> o .: "stop"
 
 
 messages :: IO [Message]
