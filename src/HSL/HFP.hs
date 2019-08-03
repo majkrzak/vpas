@@ -29,6 +29,8 @@ data Message =
   { operator :: Integer
   , vehicle :: Integer
   , stop :: Integer
+  , latitude :: Double
+  , longitude :: Double
   }
   deriving Show
 
@@ -36,7 +38,12 @@ instance FromJSON Message where
   parseJSON (Object o) = parseJSON' . head . elems $ o
     where
       parseJSON' (Object o) =
-        Message <$> o .: "oper" <*> o .: "veh" <*> o .: "stop"
+        Message
+        <$> o .: "oper"
+        <*> o .: "veh"
+        <*> o .: "stop"
+        <*> o .: "lat"
+        <*> o .: "long"
 
 messages :: IO (TQueue Message)
 messages = do
