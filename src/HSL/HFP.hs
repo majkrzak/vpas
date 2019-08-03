@@ -1,6 +1,7 @@
 module HSL.HFP where
 
-import Control.Concurrent
+import Control.Concurrent.STM
+import Control.Concurrent.STM.TQueue
 import Data.Aeson
        ((.:)
        ,FromJSON
@@ -37,20 +38,15 @@ instance FromJSON Message where
       parseJSON' (Object o) =
         Message <$> o .: "oper" <*> o .: "veh" <*> o .: "stop"
 
-messages :: IO [Message]
+messages :: IO (TQueue Message)
 messages = do
-  msg <- newEmptyMVar
+  queue <- newTQueueIO
   mc <- runClient
     mqttConfig
       { _hostname = "mqtt.hsl.fi"
-      , _msgCB = Just (\_ t m -> putMVar msg m)
+      , _msgCB = Just $ \_ _ m -> case decode m :: Maybe Message of
+          Just message -> atomically $ writeTQueue queue message
+          Nothing -> return ()
       }
   subscribe mc [("/hfp/v2/journey/ongoing/arr/#", QoS0)]
-  messages' msg
-  where
-    messages' :: MVar ByteString -> IO [Message]
-    messages' msg = unsafeInterleaveIO $ do
-      payload <- takeMVar msg
-      case decode payload :: Maybe Message of
-        Just message -> (message :) <$> messages' msg
-        Nothing -> messages' msg
+  return queue
