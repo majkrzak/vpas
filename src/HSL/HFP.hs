@@ -1,7 +1,5 @@
 module HSL.HFP where
 
-import Control.Concurrent.STM
-import Control.Concurrent.STM.TQueue
 import Data.Aeson
 import Data.HashMap.Strict
 import HSL.Common
@@ -37,14 +35,12 @@ instance FromJSON Event where
     . elems
 
 events :: IO (Stream Event)
-events = do
-  queue <- newTQueueIO
+events = runStream $ \write -> do
   mc <- runClient
     mqttConfig
     { _hostname = "mqtt.hsl.fi"
     , _msgCB = Just $ \_ _ m -> case decode m :: Maybe Event of
-        Just message -> atomically $ writeTQueue queue message
+        Just message -> write message
         Nothing -> return ()
     }
   subscribe mc [("/hfp/v2/journey/ongoing/vp/#", QoS0)]
-  return $ Stream queue
