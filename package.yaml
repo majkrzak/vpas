@@ -1,0 +1,26 @@
+name: vpas
+github: majkrzak/vpas
+author: Piotr Majkrzak
+
+dependencies:
+- base
+- net-mqtt
+- aeson
+- bytestring
+- unordered-containers
+- stm
+
+ghc-options:
+- -dynamic
+- -threaded
+
+default-extensions:
+- DuplicateRecordFields
+- TypeSynonymInstances
+- FlexibleInstances
+- RecordWildCards
+- OverloadedStrings
+
+executable:
+  main: Main.hs
+  source-dirs: src

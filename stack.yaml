@@ -1,0 +1,6 @@
+resolver: lts-13.30
+packages:
+- .
+extra-deps:
+- git: https://github.com/xc-jp/mqtt-hs.git
+  commit: 2c5ffe80cd1d765fd8ff3db2eaa54a98ca0485b2
