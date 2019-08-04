@@ -6,6 +6,7 @@ import Data.Aeson
 import Data.HashMap.Strict
 import HSL.Common
 import Network.MQTT.Client
+import Util.Stream
 
 data Event =
   Event
@@ -35,7 +36,7 @@ instance FromJSON Event where
     . head
     . elems
 
-events :: IO (TQueue Event)
+events :: IO (Stream Event)
 events = do
   queue <- newTQueueIO
   mc <- runClient
@@ -46,4 +47,4 @@ events = do
         Nothing -> return ()
     }
   subscribe mc [("/hfp/v2/journey/ongoing/vp/#", QoS0)]
-  return queue
+  return $ Stream queue
