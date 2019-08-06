@@ -12,4 +12,4 @@ loop event state = do
     Nothing -> return state
 
 
-main = foldStreamIO loop Dangling =<< events
+main = foldStream loop Dangling =<< events

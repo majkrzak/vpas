@@ -1,4 +1,4 @@
-module Util.Stream (Stream,runStream,foldStreamIO,mapStream) where
+module Util.Stream (Stream,runStream,foldStream,mapStream) where
 
 import Control.Concurrent.STM
 import System.IO.Unsafe
@@ -13,13 +13,11 @@ runStream block = do
   block (atomically . writeTQueue queue)
   return $ Stream (readTQueue queue)
 
-
-
-foldStreamIO :: (a -> b -> IO b) -> b -> Stream a -> IO b
-foldStreamIO f s (Stream read) = do
+foldStream :: (a -> b -> IO b) -> b -> Stream a -> IO b
+foldStream f s (Stream read) = do
   n <- atomically read
   m <- f n s
-  foldStreamIO f m (Stream read)
+  foldStream f m (Stream read)
 
 mapStream :: (a -> b) -> Stream a -> Stream b
 mapStream f (Stream read) = Stream $ f <$> read
