@@ -3,10 +3,13 @@ module Main where
 import HSL.HFP
 import System.IO
 import Util.Stream
+import Jumper
 
-dummy event _ = do
-  print event
+loop event state = do
   hFlush stdout
-  return ()
+  case update state event of
+    Just next' -> print next' >> return next'
+    Nothing -> return state
 
-main = foldStream dummy () =<< events
+
+main = foldStreamIO loop Dangling =<< events
