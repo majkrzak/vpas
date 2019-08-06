@@ -9,4 +9,4 @@ dummy event _ = do
   hFlush stdout
   return ()
 
-main = fold dummy () =<< events
+main = foldStream dummy () =<< events
