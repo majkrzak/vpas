@@ -4,11 +4,12 @@ import HSL.HFP
 import Jumper
 import System.IO
 import Util.Stream
+import Control.Monad
 
-loop event state = do
+loop state event = do
   hFlush stdout
   case update state event of
     Just next' -> print next' >> return next'
     Nothing -> return state
 
-main = foldStream loop Dangling =<< events
+main = foldM loop Dangling =<< events
