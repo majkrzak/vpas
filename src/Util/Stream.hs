@@ -19,5 +19,5 @@ instance Foldable Stream where
 instance Functor Stream where
   fmap f (Stream read) = Stream $ f <$> read
 
-zipStream :: [Stream a] -> Stream a
-zipStream = undefined
+instance Semigroup (Stream a) where
+  (<>) (Stream lhs) (Stream rhs) = Stream $ lhs `orElse` rhs
