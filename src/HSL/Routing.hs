@@ -7,6 +7,7 @@ import Data.Aeson.Types
 import qualified Data.Vector as V
 import HSL.Common
 import Network.HTTP.Req
+import Control.Arrow
 
 stops :: IO [Stop]
 stops =
@@ -18,23 +19,17 @@ stops =
         (ReqBodyBs "{stops{gtfsId lat lon}}")
         jsonResponse
         mempty
-    let body = responseBody r
     let body' =
           parseMaybe
-            (withObject
-               "data"
-               (\o ->
-                  o .: "data" >>=
-                  withObject
-                    "stops"
-                    (\o ->
-                       o .: "stops" >>=
-                       withArray
-                         "stops"
-                         (mapM
-                            (withObject "stop" $ \o ->
-                               Stop <$> o .: "gtfsId" <*> (Position <$> o .: "lat" <*> o .: "lon"))))))
-            body
+            (withObject "data"
+              (.: "data") >>> (>>=
+                withObject "stops"
+                  (.: "stops") >>> (>>=
+                    withArray "stops"
+                      (mapM
+                        (withObject "stop" $ \o ->
+                          Stop <$> o .: "gtfsId" <*> (Position <$> o .: "lat" <*> o .: "lon"))))))
+            (responseBody r)
     case body' of
       Just body -> return . V.toList $ body
       Nothing -> return []
