@@ -3,8 +3,13 @@ module HSL.Common where
 data Vehicle = Vehicle Integer Integer
   deriving (Eq,Show)
 
-data Stop = Stop Integer
+data StopId = StopId Integer
   deriving (Eq,Show)
 
 data Position = Position Double Double
   deriving (Eq,Show)
+
+data Stop = Stop {
+  id :: String,
+  position :: Position
+} deriving Show

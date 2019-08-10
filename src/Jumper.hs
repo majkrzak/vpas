@@ -7,11 +7,11 @@ data State
   = Dangling
   | InVehicle {
     vehicle :: Vehicle,
-    stop :: Stop,
+    stop :: StopId,
     position :: Position
   }
   | AtStop {
-    stop :: Stop,
+    stop :: StopId,
     vehicle :: Vehicle,
     position :: Position
   }

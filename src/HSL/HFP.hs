@@ -10,7 +10,7 @@ data Event =
   Event
   { position :: Position
   , vehicle :: Vehicle
-  , stop :: Maybe Stop
+  , stop :: Maybe StopId
   }
   deriving Show
 
@@ -29,7 +29,7 @@ instance FromJSON Event where
        <*> (do
               val <- o .:? "stop"
               return
-                $ Stop
+                $ StopId
                 <$> val))
     . head
     . elems

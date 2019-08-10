@@ -9,6 +9,8 @@ dependencies:
 - bytestring
 - unordered-containers
 - stm
+- req
+- vector
 
 ghc-options:
 - -dynamic
