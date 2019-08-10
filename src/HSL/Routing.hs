@@ -1,13 +1,14 @@
 module HSL.Routing where
 
-import HSL.Common
-import Network.HTTP.Req
+import Control.Monad.IO.Class
+       (liftIO)
 import Data.Aeson
 import Data.Aeson.Types
 import qualified Data.Vector as V
-import Control.Monad.IO.Class (liftIO)
+import HSL.Common
+import Network.HTTP.Req
 
-stops :: IO  [Stop]
+stops :: IO [Stop]
 stops =
   runReq defaultHttpConfig $ do
     r <-
@@ -18,7 +19,22 @@ stops =
         jsonResponse
         mempty
     let body = responseBody r
-    let body' = parseMaybe (withObject "data"  (\o -> o .: "data" >>= (withObject "stops" ((\o -> o .: "stops" >>= (withArray "stops" ( mapM (withObject "stop" $ \o -> (Stop <$> o .: "gtfsId" <*> (Position <$> o .: "lat" <*> o .: "lon")) )  )) ) )) ) ) body
+    let body' =
+          parseMaybe
+            (withObject
+               "data"
+               (\o ->
+                  o .: "data" >>=
+                  withObject
+                    "stops"
+                    (\o ->
+                       o .: "stops" >>=
+                       withArray
+                         "stops"
+                         (mapM
+                            (withObject "stop" $ \o ->
+                               Stop <$> o .: "gtfsId" <*> (Position <$> o .: "lat" <*> o .: "lon"))))))
+            body
     case body' of
       Just body -> return . V.toList $ body
       Nothing -> return []
