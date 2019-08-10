@@ -1,13 +1,12 @@
-module HSL.Routing where
+module HSL.Routing(stops) where
 
+import Control.Arrow
 import Control.Monad.IO.Class
-       (liftIO)
 import Data.Aeson
 import Data.Aeson.Types
-import qualified Data.Vector as V
+import Data.Vector
 import HSL.Common
 import Network.HTTP.Req
-import Control.Arrow
 
 stops :: IO [Stop]
 stops =
@@ -26,10 +25,14 @@ stops =
                 withObject "stops"
                   (.: "stops") >>> (>>=
                     withArray "stops"
-                      (mapM
+                      (toList >>> traverse
                         (withObject "stop" $ \o ->
-                          Stop <$> o .: "gtfsId" <*> (Position <$> o .: "lat" <*> o .: "lon"))))))
+                          Stop
+                            <$> o .: "gtfsId"
+                            <*> (Position
+                              <$> o .: "lat"
+                              <*> o .: "lon"))))))
             (responseBody r)
     case body' of
-      Just body -> return . V.toList $ body
+      Just body -> return body
       Nothing -> return []
