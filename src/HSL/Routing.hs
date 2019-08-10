@@ -19,7 +19,7 @@ stops =
         jsonResponse
         mempty
     let body' =
-          parseMaybe
+          parse
             (withObject "data"
               (.: "data") >>> (>>=
                 withObject "stops"
@@ -34,5 +34,5 @@ stops =
                               <*> o .: "lon"))))))
             (responseBody r)
     case body' of
-      Just body -> return body
-      Nothing -> return []
+      Success body -> return body
+      Error error -> fail error
