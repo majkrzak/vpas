@@ -23,6 +23,7 @@ default-extensions:
 - FlexibleInstances
 - RecordWildCards
 - OverloadedStrings
+- LambdaCase
 
 executable:
   main: Main.hs
