@@ -4,6 +4,7 @@ import HSL.Common
 import HSL.HFP
 import Naqsha.Geometry
 import Naqsha.Geometry.Spherical
+import Data.Maybe (fromMaybe)
 
 data State
   = Dangling
@@ -17,7 +18,7 @@ data State
     vehicle :: Vehicle,
     position :: Geo
   }
-  deriving Show
+  deriving (Show, Eq)
 
 
 update :: State -> Event -> Maybe State
@@ -82,3 +83,6 @@ update -- update position of the vehicle
   }
   | otherwise = Nothing
 update _ _ = Nothing
+
+update' :: State -> Event -> State
+update' state event = fromMaybe state (update state event)

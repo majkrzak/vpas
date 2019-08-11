@@ -5,11 +5,16 @@ import Jumper
 import System.IO
 import Util.Stream
 import Control.Monad
+import Data.Foldable (toList)
 
-loop state event = do
-  hFlush stdout
-  case update state event of
-    Just next' -> print next' >> return next'
-    Nothing -> return state
+dedup (x:xs) = x : dedup' x xs
+  where
+    dedup' x1 (x2:xs)
+      | x1 == x2 = dedup' x1 xs
+      | otherwise = dedup (x2:xs)
 
-main = foldM loop Dangling =<< events
+main = do
+  events' <- events
+  let states = scanl update' Dangling (toList events')
+  let states' = dedup states
+  foldM (\_ s -> hFlush stdout >> print s) () states'
