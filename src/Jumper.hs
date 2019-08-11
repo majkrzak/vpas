@@ -3,6 +3,7 @@ module Jumper where
 import HSL.Common
 import HSL.HFP
 import Naqsha.Geometry
+import Naqsha.Geometry.Spherical
 
 data State
   = Dangling
@@ -49,17 +50,17 @@ update -- jump at the first encountered stop
     position = p''
   }
   | otherwise = Nothing
-update -- jump int first encountered bus
+update -- jump int first encountered bus inside 16m radius
   AtStop {
-    stop = s',
-    vehicle = v'
+    vehicle = v',
+    position = p'
   }
   Event {
     stop = Just s'',
     vehicle = v'',
     position = p''
   }
-  | s' == s'' && v' /= v'' = Just InVehicle {
+  | distance p' p'' < 16  && v' /= v'' = Just InVehicle {
     vehicle = v'',
     stop = s'',
     position = p''
