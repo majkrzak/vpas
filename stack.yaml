@@ -2,5 +2,6 @@ resolver: lts-14.0
 packages:
 - .
 extra-deps:
+- naqsha-0.3.0.1@sha256:1d13ac58a2604341641d001ab82020326823ab028d679839e0417bbad9dfab2b,2566
 - git: https://github.com/xc-jp/mqtt-hs.git
   commit: 2c5ffe80cd1d765fd8ff3db2eaa54a98ca0485b2

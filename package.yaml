@@ -11,6 +11,7 @@ dependencies:
 - stm
 - req
 - vector
+- naqsha
 
 ghc-options:
 - -dynamic

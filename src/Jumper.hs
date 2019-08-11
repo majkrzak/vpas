@@ -2,18 +2,19 @@ module Jumper where
 
 import HSL.Common
 import HSL.HFP
+import Naqsha.Geometry
 
 data State
   = Dangling
   | InVehicle {
     vehicle :: Vehicle,
     stop :: StopId,
-    position :: Position
+    position :: Geo
   }
   | AtStop {
     stop :: StopId,
     vehicle :: Vehicle,
-    position :: Position
+    position :: Geo
   }
   deriving Show
 

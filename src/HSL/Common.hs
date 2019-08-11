@@ -10,6 +10,6 @@ data Position = Position Double Double
   deriving (Eq,Show)
 
 data Stop = Stop {
-  id :: String,
+  stopId :: String,
   position :: Position
 } deriving Show
